@@ -1,0 +1,671 @@
+/* Fonts are self-hosted in fonts/ (Bricolage Grotesque, Figtree, JetBrains Mono, latin subset):
+   no request goes to Google, so the page renders the same on a locked-down school network. */
+@font-face { font-family: 'Bricolage Grotesque'; font-style: normal; font-weight: 600 800; font-display: swap; src: url(fonts/bricolage-grotesque-600-800.woff2) format('woff2'); }
+@font-face { font-family: 'Figtree'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(fonts/figtree-400-700.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500 700; font-display: swap; src: url(fonts/jetbrains-mono-500-700.woff2) format('woff2'); }
+
+:root {
+  --navy: #12100E;        /* page ink */
+  --navy-mid: #1C1814;
+  --navy-card: #231E19;
+  --cyan: #FFC940;        /* primary accent: sun */
+  --cyan-dim: #B98A12;
+  --slate: #B8AA96;
+  --white: #FBF5EC;
+  --amber: #C8ADFF;       /* 'think about it' colour: lilac */
+  --green: #5EE0A0;
+  --red: #FF6B81;
+  --border: #3A3128;
+  --field-border: #77695A;   /* the outline of inputs and table cells: at least 3:1 against the page */
+  /* One shared column width for header, nav and main — these were previously
+     760px/900px/760px (an accidental mismatch), which made the content
+     column look narrower than the nav bar sitting right above it. */
+  --content-width: 920px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  /* Base bumped up from the browser default (16px) — this is meant to stand
+     in for direct teaching, read unsupervised, so body copy needs to be
+     comfortably readable, not deck-slide compact. */
+  font-size: 19px;
+}
+body {
+  margin: 0;
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'Figtree', sans-serif;
+  line-height: 1.65;
+}
+
+.progress-rail {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--navy-mid);
+  z-index: 50;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--cyan);
+  transition: width 0.3s ease;
+}
+
+.site-header {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 40px 24px 16px;
+  text-align: center;
+  position: relative;
+}
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72em;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  margin-bottom: 0.6em;
+}
+.site-header h1 { font-size: 2.2em; margin: 0 0 0.2em; }
+.site-header .sub { color: var(--slate); margin: 0 0 1em; }
+.reset-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--slate);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75em;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+.section-nav {
+  max-width: var(--content-width);
+  margin: 0 auto 24px;
+  padding: 0 24px;
+}
+.section-nav ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+}
+.section-nav li button {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  color: var(--slate);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78em;
+  padding: 7px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.section-nav li button.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.section-nav li button.visited:not(.active) {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+main { max-width: var(--content-width); margin: 0 auto; padding: 0 24px 80px; }
+
+.site-section { display: none; padding-top: 8px; }
+.site-section.active { display: block; animation: fadein 0.25s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 1.6em; margin: 0 0 0.5em; }
+h3 { font-size: 1.05em; color: var(--cyan); margin: 0 0 0.35em; }
+p { margin: 0.6em 0; }
+code { background: var(--navy-mid); color: var(--green); padding: 1px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+strong { color: var(--cyan); }
+em { color: var(--amber); font-style: normal; }
+
+.li-box, .sc-box {
+  flex: 1;
+  min-width: 240px;
+  background: var(--navy-mid);
+  border-top: 3px solid var(--cyan);
+  padding: 16px 18px;
+  border-radius: 4px;
+}
+.sc-box { border-top-color: var(--amber); }
+.li-box ul, .sc-box ul { margin: 0; padding-left: 1.2em; font-size: 0.92em; }
+.li-box li, .sc-box li { margin-bottom: 0.4em; }
+
+.mini-card {
+  flex: 1;
+  min-width: 180px;
+  background: var(--navy-mid);
+  border-top: 3px solid var(--cyan);
+  padding: 14px 16px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+.section-rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+.mini-card.amber { border-top-color: var(--amber); }
+.mini-card.red { border-top-color: var(--red); }
+.mini-card h3 { margin-bottom: 0.3em; }
+
+.field-block { margin: 1.4em 0; }
+.field-block label { display: block; font-weight: 600; margin-bottom: 0.4em; }
+textarea, input[type="text"], input[type="number"] {
+  width: 100%;
+  background: var(--navy-mid);
+  border: 1px solid var(--field-border);
+  color: var(--white);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.95em;
+  resize: vertical;
+}
+textarea.mono, .model-answer.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; white-space: pre-wrap; }
+textarea:focus, input:focus { outline: 2px solid var(--cyan); outline-offset: 1px; }
+.numeric-input { width: 120px; display: inline-block; margin-right: 10px; }
+
+.reveal-btn, .check-num-btn {
+  margin-top: 8px;
+  background: none;
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  font-size: 0.88em;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+}
+.reveal-btn:hover, .check-num-btn:hover { background: var(--navy-mid); }
+.model-answer {
+  margin-top: 10px;
+  background: var(--navy-mid);
+  border-left: 3px solid var(--green);
+  padding: 12px 16px;
+  font-size: 1em;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 3px;
+}
+
+/* Breaks the diagram out of the 920px text column to a wider, independently
+   centred box — these SVGs carry small labels that need real pixel size to
+   read comfortably, and 920px minus padding was shrinking them below their
+   own native detail level rather than showing them at full size.
+   Margin is written as three longhands (not the `margin: 1em 0` shorthand)
+   so nothing here can be reset by a same-specificity rule landing later in
+   the file — that's exactly what broke this the first time: a later
+   shorthand margin rule silently zeroed this margin-left back out. */
+
+.diagram-wrap { position: relative; }
+.diagram-wrap img, .sc-diagram { width: 100%; height: auto; display: block; border-radius: 6px; }
+.hotspot {
+  position: absolute;
+  background: rgba(255,201,64,0.08);
+  border: 1px dashed rgba(255,201,64,0.4);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.hotspot:hover, .hotspot:focus { background: rgba(255,201,64,0.2); }
+.hotspot-note {
+  margin-top: 8px;
+  background: var(--navy-mid);
+  border-left: 3px solid var(--cyan);
+  padding: 10px 14px;
+  font-size: 1em;
+  border-radius: 3px;
+}
+
+.single-select { display: flex; gap: 8px; flex-wrap: wrap; margin: 0.5em 0; }
+.single-select button {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.98em;
+}
+.single-select button:hover:not(:disabled) { border-color: var(--cyan); }
+.single-select.answered button { cursor: default; }
+.single-select button.correct { background: var(--green); color: var(--navy); border-color: var(--green); }
+.single-select button.incorrect { background: var(--red); color: var(--navy); border-color: var(--red); }
+.feedback { margin-top: 8px; font-size: 0.98em; background: var(--navy-mid); padding: 10px 14px; border-radius: 4px; border-left: 3px solid var(--slate); }
+.feedback.correct { border-left-color: var(--green); }
+.feedback.incorrect { border-left-color: var(--red); }
+
+/* The structure-chart targets sit directly on top of boxes the diagram
+   itself already draws (dashed, "(a)/(b)/(c), drag a label here"), so this
+   overlay stays invisible until hover/fill rather than drawing a second
+   dashed border on top of the diagram's own — doubling it up read as
+   confusing/broken rather than as one clear clickable box. */
+
+/* Once a chip is placed, the box needs a SOLID fill — the diagram's own
+   "(a)" / "drag a label here" placeholder text is drawn directly underneath
+   this button at the same spot, and a translucent background let it show
+   through the new label, which read as the drop not having replaced
+   anything. Matching the diagram's own navy-mid box fill makes the chip's
+   text the only thing visible, like the box was genuinely swapped out. */
+
+.video-fallback { margin: 10px auto 0; background: var(--navy-mid); border-radius: 4px; padding: 10px 14px; font-size: 0.98em; max-width: 560px; text-align: left; }
+.video-fallback summary { cursor: pointer; color: var(--cyan); }
+
+.check-btn {
+  margin-top: 10px;
+  background: var(--cyan-dim);
+  color: var(--navy);
+  border: none;
+  padding: 9px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.next-btn {
+  display: block;
+  margin: 2em auto 0;
+  background: var(--cyan);
+  color: var(--navy);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+}
+.next-btn:hover { background: var(--white); }
+
+.tts-btn {
+  display: block;
+  margin: 0 0 1.2em;
+  background: var(--navy-mid);
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  cursor: pointer;
+}
+.tts-btn:hover { border-color: var(--cyan); background: var(--navy); }
+.tts-btn.speaking { border-color: var(--green); color: var(--green); animation: tts-pulse 1.4s ease-in-out infinite; }
+@keyframes tts-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+.tts-block-btn {
+  display: inline-block;
+  vertical-align: middle;
+  background: none;
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  width: 1.7em;
+  height: 1.7em;
+  line-height: 1.5em;
+  padding: 0;
+  margin: 0 8px 4px 0;
+  border-radius: 50%;
+  font-size: 0.7em;
+  cursor: pointer;
+  float: left;
+}
+.tts-block-btn:hover { background: var(--navy-mid); border-color: var(--cyan); }
+.tts-block-btn.speaking { border-color: var(--green); color: var(--green); animation: tts-pulse 1.4s ease-in-out infinite; }
+
+.note-small { font-size: 0.8em; color: var(--slate); font-style: italic; }
+
+/* (The Lesson 9 print-summary rule was removed here: this page has no .print-summary
+   element, so the rule hid everything and a printed page came out blank.) */
+
+@media (max-width: 600px) {
+  
+  .site-header h1 { font-size: 1.7em; }
+}
+
+/* ---- mixed-ability scaffolding (added 2026-09-11, matching Lesson 11) ---- */
+
+/* One plain-language sentence closing each teaching section — the thing to
+   take away for a student who has lost the thread halfway down. Reaches the
+   printed notes, which gives them a revision skeleton. */
+.takeaway {
+  background: var(--navy-mid);
+  border-left: 4px solid var(--green);
+  border-radius: 3px;
+  padding: 14px 18px;
+  margin: 1.6em 0 0.5em;
+  font-size: 1em;
+}
+.takeaway h3 {
+  color: var(--green);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72em;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.4em;
+}
+
+.glossary { width: 100%; border-collapse: collapse; margin: 0.8em 0; }
+.glossary td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 0.95em; vertical-align: top; }
+.glossary td:first-child { width: 230px; color: var(--white); }
+.glossary .where { color: var(--slate); font-family: 'JetBrains Mono', monospace; font-size: 0.85em; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  .glossary td:first-child { width: 150px; }
+}
+
+/* ============================================================================
+   FA5 Period 2 additions — widgets this lesson needs that Lesson 9 didn't.
+   Everything above this line is the shared Lesson 9 design system, unchanged.
+   ========================================================================== */
+
+/* --- diagrams ------------------------------------------------------------ */
+.diagram-wrap { margin: 1.6em 0; text-align: center; }
+.diagram-wrap img {
+  max-width: 100%; height: auto;
+  background: var(--navy-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.diagram-wrap figcaption {
+  color: var(--slate); font-size: 0.86em; margin-top: 0.7em;
+}
+
+/* --- section 1 step walker ----------------------------------------------- */
+
+/* --- IPv4 octet split ---------------------------------------------------- */
+.octet-split {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 6px; margin: 1.5em 0; flex-wrap: wrap;
+}
+.octet-box {
+  background: var(--navy-card); border: 1px solid var(--cyan);
+  border-radius: 6px; padding: 12px 18px; text-align: center; min-width: 88px;
+}
+.octet-num { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1.5em; color: var(--cyan); font-weight: 700; }
+.octet-lbl { display: block; font-size: 0.7em; color: var(--slate); margin-top: 4px; letter-spacing: 0.06em; }
+.octet-dot { font-size: 1.8em; color: var(--slate); padding-bottom: 14px; }
+
+/* --- place-value tables -------------------------------------------------- */
+.pv-table {
+  border-collapse: collapse; margin: 0.9em auto; font-family: 'JetBrains Mono', monospace;
+}
+.pv-table th, .pv-table td {
+  border: 1px solid var(--field-border); text-align: center;
+  width: 62px; height: 48px; padding: 0;
+}
+.pv-table th { background: var(--navy-mid); color: var(--slate); font-size: 0.82em; font-weight: 700; }
+.pv-table td { background: var(--navy-card); font-size: 1.15em; color: var(--white); }
+.pv-table.worked td { color: var(--cyan); font-weight: 700; }
+.pv-table input {
+  padding: 0; box-sizing: border-box; min-width: 0;   /* the general text-input padding left no room for a digit in a narrow cell */
+  width: 100%; height: 100%; border: none; background: transparent;
+  color: var(--white); text-align: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 1.05em;
+}
+.pv-table input:focus { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.pv-table input.cell-ok  { background: rgba(94,224,160, 0.18); color: var(--green); font-weight: 700; }
+.pv-table input.cell-bad { background: rgba(255,107,129, 0.16); color: var(--red); font-weight: 700; }
+.pv-exercise {
+  background: var(--navy-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin: 1.4em 0;
+}
+.pv-exercise > p:first-child { margin-top: 0; }
+/* Inside an exercise box the empty answer cells were the SAME colour as the box, so only a
+   hairline showed. Make them the darkest surface on the page, with a lighter header row. */
+.pv-exercise .pv-table td { background: var(--navy); }
+.pv-exercise .pv-table th { background: #2E2721; color: #D6C9B4; }
+.pv-exercise .pv-table td:focus-within { background: #1c1814; }
+
+/* --- valid/invalid sorter ------------------------------------------------ */
+.sorter { margin: 1.2em 0; }
+.sorter-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto auto;
+  gap: 10px; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.sorter-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 1.05em; color: var(--cyan);
+}
+.sorter-btn {
+  background: var(--navy-mid); color: var(--white);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 0.86em;
+}
+.sorter-btn:hover:not(:disabled) { border-color: var(--cyan); }
+.sorter-btn:disabled { opacity: 0.45; cursor: default; }
+.sorter-btn.correct   { background: rgba(94,224,160,0.2); border-color: var(--green); color: var(--green); opacity: 1; }
+.sorter-btn.incorrect { background: rgba(255,107,129,0.18); border-color: var(--red); color: var(--red); opacity: 1; }
+.sorter-why {
+  grid-column: 1 / -1; margin: 4px 0 0; font-size: 0.86em; color: var(--slate);
+}
+.sorter-why.ok  { color: var(--green); }
+.sorter-why.bad { color: var(--amber); }
+
+/* --- DNS drag-to-order --------------------------------------------------- */
+.order-exercise { margin: 1.3em 0; }
+.order-list { list-style: none; margin: 0; padding: 0; counter-reset: ord; }
+.order-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 10px; align-items: center;
+  background: var(--navy-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 11px 14px; margin-bottom: 7px;
+  cursor: grab;
+}
+.order-item::before {
+  content: var(--n, "");
+  grid-column: 1;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+  color: var(--cyan); min-width: 1.4em;
+}
+.order-item.dragging { opacity: 0.45; border-color: var(--cyan); cursor: grabbing; }
+.order-item.pos-ok   { border-left: 3px solid var(--green); }
+.order-item.pos-bad  { border-left: 3px solid var(--amber); }
+/* the grip is the drag handle: a finger has to start on it (so the rest of the row still
+   scrolls the page); a mouse can also grab anywhere on the row */
+.order-item { user-select: none; -webkit-user-select: none; touch-action: pan-y; grid-template-columns: auto auto 1fr auto auto; }
+.order-grip { display: block; touch-action: none; cursor: grab; color: var(--slate); font-size: 1.25em; line-height: 1; padding: 6px 4px; }
+.order-item.dragging .order-grip { cursor: grabbing; color: var(--cyan); }
+.order-text { font-size: 0.94em; }
+.order-move {
+  background: var(--navy-mid); color: var(--slate);
+  border: 1px solid var(--border); border-radius: 4px;
+  width: 30px; height: 30px; cursor: pointer; font-size: 0.9em; line-height: 1;
+}
+.order-move:hover { border-color: var(--cyan); color: var(--cyan); }
+.order-controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.check-btn.secondary { background: none; color: var(--slate); }
+
+@media (max-width: 620px) {
+  .sorter-row { grid-template-columns: 1fr; }
+  .order-item { grid-template-columns: auto auto 1fr auto auto; gap: 6px; padding: 10px 8px; }
+  /* 8 columns must fit inside a phone-width exercise box (about 250px), or the .beat's
+     overflow:hidden silently clips the right-hand columns */
+  .pv-table th, .pv-table td { width: 29px; height: 42px; }
+  .pv-table th { font-size: .68em; }
+  .pv-table td { font-size: 1em; }
+  .pv-exercise { padding: 14px 10px; }
+}
+
+/* ============================================================================
+   Teach → Check → Consolidate beats (added 2026-09-17 after teacher feedback
+   that the exercises alone didn't carry enough explanation).
+   ========================================================================== */
+.beat { border: 1px solid var(--border); border-radius: 10px; margin: 0 0 24px; overflow: hidden; }
+.beat-head {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--navy-mid); padding: 11px 20px; border-bottom: 1px solid var(--border);
+}
+.beat-num {
+  font-family: 'JetBrains Mono', monospace; font-size: .78em; font-weight: 700;
+  color: var(--navy); background: var(--cyan); border-radius: 4px; padding: 2px 8px;
+}
+.beat-name {
+  font-family: 'JetBrains Mono', monospace; font-size: .76em; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--cyan);
+}
+.beat-why { margin-left: auto; font-size: .75em; color: var(--slate); }
+.beat-body { padding: 20px 24px; }
+.beat-body > .beat-h { margin-top: 0; }
+.beat-body h3 { font-size: 1.05em; margin: 1.5em 0 .4em; }
+
+/* --- the chain visual the narration drives --- */
+.stage { background: var(--navy-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+.chain { display: flex; align-items: stretch; gap: 7px; flex-wrap: wrap; justify-content: center; }
+.node {
+  flex: 1 1 128px; min-width: 128px; background: var(--navy-mid);
+  border: 1px solid var(--border); border-radius: 7px; padding: 11px 9px;
+  text-align: center; transition: all .35s ease; opacity: .7;
+}
+.node .nlabel { font-family: 'JetBrains Mono', monospace; font-size: .68em; letter-spacing: .08em; color: var(--slate); display: block; margin-bottom: 4px; }
+.node .nname  { font-size: .88em; font-weight: 600; display: block; }
+.node .nrole  { font-size: .72em; color: var(--slate); display: block; margin-top: 4px; line-height: 1.4; }
+.node.lit  { opacity: 1; border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan) inset; background: #2A2214; }
+.node.done { opacity: .8; border-color: var(--green); }
+.arrow { align-self: center; color: var(--border); font-size: 1.05em; }
+.chain-caption { text-align: center; color: var(--slate); font-size: .81em; margin: 13px 0 0; min-height: 2.5em; }
+
+/* --- narration controls --- */
+.rail { height: 3px; background: var(--navy-mid); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
+.rail-fill { height: 100%; width: 0; background: var(--cyan); transition: width .4s ease; }
+.narr { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.btn { background: var(--navy-mid); color: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 9px 16px; cursor: pointer; font-family: inherit; font-size: .85em; }
+.btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn.primary { background: var(--cyan); color: var(--navy); border-color: var(--cyan); font-weight: 600; }
+.btn.primary:hover:not(:disabled) { background: #FFD970; color: var(--navy); }
+.seg-count { font-family: 'JetBrains Mono', monospace; font-size: .75em; color: var(--slate); letter-spacing: .06em; margin-left: auto; }
+.narr-hint { font-size: .78em; color: var(--slate); margin: 0 0 12px; }
+
+/* --- the script, readable --- */
+.script { background: var(--navy-card); border-left: 3px solid var(--cyan); border-radius: 0 8px 8px 0; padding: 12px 22px 14px; min-height: 9em; }
+.script .note-head { font-family: 'JetBrains Mono', monospace; font-size: .72em; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); margin: 0 0 4px; }
+.script p { color: var(--white); margin: .5em 0; line-height: 1.6; }
+.script .clause { border-radius: 3px; transition: background .25s ease; padding: 1px 0; }
+.script .clause.now { background: rgba(255,201,64,0.20); box-shadow: 0 0 0 3px rgba(255,201,64,0.20); }
+.script .note-empty { color: var(--slate); }
+.narr-read { display: none; }
+
+/* --- gating --- */
+.check-zone.locked { opacity: .4; pointer-events: none; filter: saturate(.4); }
+.lock-msg { font-size: .84em; color: var(--amber); margin: 0 0 14px; }
+.lock-msg.unlocked { color: var(--green); }
+
+/* --- consolidate --- */
+.take { background: var(--navy-card); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 15px 20px; margin-bottom: 11px; }
+.take h3 { margin: 0 0 .35em; font-size: .93em; color: var(--green); }
+.take p  { margin: 0; font-size: .91em; }
+.not-list { display: grid; gap: 7px; margin-top: 12px; }
+.not-row { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: baseline; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 6px; padding: 9px 13px; font-size: .86em; }
+.not-row code { color: var(--amber); font-family: 'JetBrains Mono', monospace; }
+
+@media (max-width: 620px) {
+  .beat-why { display: none; }
+  .beat-body { padding: 16px 15px; }
+}
+
+/* When the chain wraps, the arrow at the end of a row points into empty space.
+   Below the width where a 5-6 node chain fits on one line, drop the arrows and
+   let the numbered labels carry the sequence instead. */
+@media (max-width: 1000px) {
+  .chain .arrow { display: none; }
+  .chain { gap: 9px; }
+  .node { flex: 1 1 150px; }
+}
+
+/* ---- H1 revision (2026-09-25): opening-guess echo, faded hints, binary -> decimal ---- */
+.echo-take { border-left-color: var(--amber); }
+.echo-quote { font-style: italic; color: var(--white); }
+.echo-quote.empty { font-style: normal; color: var(--slate); }
+.hint-steps { margin-top: 10px; }
+.hint-steps ol { margin: 0 0 6px; padding-left: 1.4em; font-size: 0.92em; }
+.hint-steps li { margin-bottom: 0.35em; }
+.reveal-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.reveal-btn:disabled:hover { background: none; }
+.bd-exercise { margin: 1.4em 0 2.2em; }
+.bd-exercise .field-block { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bd-exercise .field-block label { flex-basis: 100%; margin: 0; }
+.bd-exercise .field-block input.numeric-input { width: 120px; flex: 0 0 120px; margin: 0; }
+.bd-exercise .field-block .check-btn { margin: 0; }
+.echo-take h3 { color: var(--amber); }
+.echo-take p + p { margin-top: 0.5em; }
+
+/* ---- FA5 theme: display face for headings; dark text on the sun-coloured buttons ---- */
+h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Figtree', sans-serif; letter-spacing: -0.02em; }
+.btn.primary { color: #1A1208; }
+
+/* ---- H1 review fixes (2026-10-01) ---- */
+[hidden] { display: none !important; }
+.dns-ref { margin: .5em 0 .4em 1.4em; padding: 0; }
+.dns-ref li { margin: .3em 0; color: var(--slate); }
+.dns-ref li b { color: var(--white); font-weight: 600; }
+.dns-ref li.skipped { background: rgba(255,201,64,0.10); border-radius: 4px; padding: 2px 6px; margin-left: -6px; }
+.dns-ref-note { font-size: .82em; color: var(--slate); margin: .4em 0 0; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ---- Section 1: animated "three packets, three routes, reassembled" diagram ----
+   With no .play class (JS off, reduced motion) the figure shows its FINAL state: slots
+   filled, result stated. .play runs the story from the start. */
+.route-anim .ra-svg { width: 100%; height: auto; display: block; }
+.route-anim .ra-node { font: 700 13px 'JetBrains Mono', monospace; fill: #B8AA96; }
+.route-anim .ra-cap  { font: 13px 'Figtree', sans-serif; fill: #B8AA96; }
+.route-anim .ra-good { font: 700 13px 'Figtree', sans-serif; fill: #5EE0A0; }
+.route-anim .ra-lbl  { font: 700 13px 'JetBrains Mono', monospace; fill: #FBF5EC; }
+.route-anim .ra-pk   { font: 700 12px 'JetBrains Mono', monospace; fill: #1A1208; }
+.route-anim .ra-route { fill: none; stroke-width: 2.5; stroke-dasharray: 6 5; opacity: .55; }
+.route-anim .ra-pkt { opacity: 0; offset-rotate: 0deg; }
+.route-anim .ra-stackp { opacity: 0; }
+.route-anim.play .ra-pkt { animation: raGo var(--dur) linear var(--delay) both; }
+.route-anim.play .ra-stackp { animation: raStackOut .35s ease var(--delay) both; }
+.route-anim.play .ra-fill { animation: raFill .45s cubic-bezier(.2,1.4,.4,1) var(--delay) backwards; transform-box: fill-box; transform-origin: center; }
+.route-anim.play .ra-done { animation: raDone .6s ease var(--delay) backwards; }
+.route-anim.play .ra-route { animation: raRoute .8s ease .4s backwards; }
+@keyframes raGo { 0% { offset-distance: 0%; opacity: 0; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes raStackOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes raFill { from { opacity: 0; transform: scale(.4); } }
+@keyframes raDone { from { opacity: 0; } }
+@keyframes raRoute { from { opacity: 0; } }
+.ra-replay { margin-top: 10px; }
+
+/* ---- Section 5: the summary and its gate ---- */
+.summary-box { background: var(--navy-card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin: 1.2em 0; }
+.summary-box h3 { margin: 0 0 .6em; }
+.progress-list { list-style: none; margin: 0 0 .8em; padding: 0; display: grid; gap: 6px; }
+.progress-list li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; background: var(--navy-mid); border: 1px solid var(--border); font-size: .92em; }
+.progress-list .pl-mark { width: 1.4em; text-align: center; font-weight: 700; color: var(--slate); }
+.progress-list li.done .pl-mark { color: var(--green); }
+.progress-list li.done .pl-text { color: var(--white); }
+.progress-list li.todo .pl-text { color: var(--slate); }
+.progress-list .pl-text { flex: 1; }
+.pl-go { background: none; border: 1px solid var(--cyan); color: var(--cyan); border-radius: 999px; padding: 3px 12px; font-size: .82em; cursor: pointer; font-family: inherit; }
+.pl-go:hover { background: var(--cyan); color: #1A1208; }
+.summary-status { margin: .4em 0 .8em; font-size: .92em; }
+.summary-status.waiting { color: var(--amber); }
+.summary-status.ready { color: var(--green); font-weight: 600; }
+.summary-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: .6em; }
+.summary-actions .check-btn:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 600px) {
+  .progress-list li { flex-wrap: wrap; }
+  .progress-list .pl-text { flex: 1 1 calc(100% - 2.6em); }
+  .pl-go { margin-left: 2.4em; }
+  .summary-box { padding: 14px 12px; }
+}

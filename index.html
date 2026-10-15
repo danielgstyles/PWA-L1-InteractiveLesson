@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H1 — Data Packets, IPv4 and DNS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="progress-rail" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+
+<header class="site-header">
+  <div class="eyebrow">Programming for the Web · Homework H1 · Self-paced · about 45 minutes</div>
+  <h1>How data gets there</h1>
+  <p class="sub">Packets, IP addresses, and the lookup that happens before anything loads</p>
+  <button id="reset-btn" class="reset-btn" type="button">Reset my progress</button>
+</header>
+
+<nav class="section-nav" aria-label="Section navigation">
+  <ol id="nav-list"></ol>
+</nav>
+
+<main id="app">
+
+  <!-- ==================== SECTION 1 ==================== -->
+  <section class="site-section" id="sec-1" data-title="The journey">
+    <div class="eyebrow">Section 1 · about 8 min</div>
+    <h2>You type an address. Something arrives.</h2>
+    <p>In class you separated the <em>internet</em> from the <em>web</em>. This homework is about the part in between: what actually travels, how it's addressed, and how a name like <code>example.com</code> becomes something a machine can route to.</p>
+    <p class="note-small">The whole page takes about 45 minutes, including a short check on Canvas at the end. Your progress saves as you go, so you can stop and come back.</p>
+
+    <div class="field-block">
+      <label for="q-hook">Quick guess before you read on — when you load a page, does it arrive as one continuous stream of data, or in pieces? (No marking. Just commit to an answer.)</label>
+      <textarea id="q-hook" data-store="hook" rows="2" placeholder="One stream, or pieces? Why do you think so?"></textarea>
+    </div>
+
+    <div class="sc-box">
+      <h3>By the end of this page you can&hellip;</h3>
+      <ul>
+        <li>Name the three parts of a packet and what each is for</li>
+        <li>Say why 4.3 billion addresses turned out not to be enough</li>
+        <li>Convert an octet between decimal and binary</li>
+        <li>Put the ten DNS steps in order without the notes open</li>
+        <li>Explain what is different for the <em>next</em> person to look up a site</li>
+      </ul>
+    </div>
+
+    
+    <div class="beat teach-beat">
+      <div class="beat-head"><span class="beat-num">1</span><span class="beat-name">Teach</span><span class="beat-why">work through this first</span></div>
+      <div class="beat-body">
+        <h2 class="beat-h">Nothing travels in one piece</h2>
+        <p>Before the exercises, here is what actually happens when you ask for a page &mdash; and why the answer is stranger than it looks.</p>
+        <div class="stage">
+          <div class="chain"><div class="node" data-focus="msg"><span class="nlabel">START</span><span class="nname">One message</span><span class="nrole">a page on a server</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="split"><span class="nlabel">SPLIT</span><span class="nname">Packets</span><span class="nrole">numbered, addressed</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="routes"><span class="nlabel">TRAVEL</span><span class="nname">Many routes</span><span class="nrole">chosen per packet</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="fail"><span class="nlabel">STRESS</span><span class="nname">A router fails</span><span class="nrole">traffic flows around it</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="reasm"><span class="nlabel">ARRIVE</span><span class="nname">Reassembled</span><span class="nrole">put back in order</span></div></div>
+          <p class="chain-caption">Press play &mdash; or switch to reading &mdash; and the diagram will follow along.</p>
+        </div>
+        <div class="rail"><div class="rail-fill"></div></div>
+        <div class="narr">
+          <button type="button" class="btn narr-prev" disabled>&#9664; Back</button>
+          <button type="button" class="btn primary narr-play">&#9654; Play the explanation</button>
+          <button type="button" class="btn narr-stop" disabled>Stop</button>
+          <button type="button" class="btn narr-next">Next &#9654;</button>
+          <button type="button" class="btn narr-read">Read it instead</button>
+          <span class="seg-count">0 / 0</span>
+        </div>
+        <p class="narr-hint">Listen or read &mdash; same words either way. You can stop and replay any part.</p>
+        <div class="script" hidden></div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">2</span><span class="beat-name">Check</span><span class="beat-why">does it hold up?</span></div>
+      <div class="beat-body">
+        <p class="lock-msg">&#128274; Work through the explanation above first &mdash; this unlocks at the end.</p>
+        <div class="check-zone locked">
+          <figure class="diagram-wrap route-anim" id="route-anim">
+            <svg class="ra-svg" viewBox="0 0 760 340" role="img" aria-label="The web server splits a page into three numbered packets. They travel by three different routes through five routers. Packet 1 arrives first, then packet 3, then packet 2, and your laptop puts them back in order 1, 2, 3.">
+    <g fill="#231E19" stroke="#77695A" stroke-width="2"><circle cx="300" cy="60" r="26"/><circle cx="300" cy="170" r="26"/><circle cx="300" cy="280" r="26"/><circle cx="470" cy="110" r="26"/><circle cx="470" cy="230" r="26"/></g>
+    <g class="ra-node" text-anchor="middle"><text x="300" y="65">R1</text><text x="300" y="175">R2</text><text x="300" y="285">R3</text><text x="470" y="115">R4</text><text x="470" y="235">R5</text></g>
+    <rect x="20" y="130" width="120" height="80" rx="8" fill="#1C1814" stroke="#FFC940" stroke-width="2"/>
+    <text x="80" y="165" text-anchor="middle" class="ra-lbl">SENDER</text><text x="80" y="188" text-anchor="middle" class="ra-cap">the web server</text>
+    <rect x="620" y="130" width="120" height="80" rx="8" fill="#1C1814" stroke="#FFC940" stroke-width="2"/>
+    <text x="680" y="165" text-anchor="middle" class="ra-lbl">RECEIVER</text><text x="680" y="188" text-anchor="middle" class="ra-cap">your laptop</text>
+    <path class="ra-route" stroke="#FFC940" d="M140,155 L300,60 L470,110 L620,155"/>
+    <path class="ra-route" stroke="#5EE0A0" d="M140,170 L300,170 L470,230 L620,178"/>
+    <path class="ra-route" stroke="#C8ADFF" d="M140,186 L300,280 L470,230 L620,190"/>
+    <g class="ra-stackp" style="--delay:0.8s"><rect x="24" y="222" width="34" height="26" rx="3" fill="#FFC940"/><text x="41" y="240" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-stackp" style="--delay:1.4s"><rect x="66" y="222" width="34" height="26" rx="3" fill="#5EE0A0"/><text x="83" y="240" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-stackp" style="--delay:2.0s"><rect x="108" y="222" width="34" height="26" rx="3" fill="#C8ADFF"/><text x="125" y="240" text-anchor="middle" class="ra-pk">3</text></g>
+    <text x="80" y="268" text-anchor="middle" class="ra-cap">the page, split into 3</text>
+    <rect x="624" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="666" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="708" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <g class="ra-fill" style="--delay:4.2s"><rect x="624" y="222" width="34" height="26" rx="3" fill="#FFC940"/><text x="641" y="240" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-fill" style="--delay:6.6s"><rect x="666" y="222" width="34" height="26" rx="3" fill="#5EE0A0"/><text x="683" y="240" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-fill" style="--delay:5.0s"><rect x="708" y="222" width="34" height="26" rx="3" fill="#C8ADFF"/><text x="725" y="240" text-anchor="middle" class="ra-pk">3</text></g>
+    <g class="ra-done" style="--delay:7.3s" text-anchor="middle"><text x="680" y="272" class="ra-cap">Arrived as 1, 3, 2</text><text x="680" y="291" class="ra-good">Put back as 1, 2, 3</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,155 L300,60 L470,110 L620,155');--dur:3.4s;--delay:0.8s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#FFC940"/><text y="4" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,170 L300,170 L470,230 L620,178');--dur:5.2s;--delay:1.4s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#5EE0A0"/><text y="4" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,186 L300,280 L470,230 L620,190');--dur:3.0s;--delay:2.0s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#C8ADFF"/><text y="4" text-anchor="middle" class="ra-pk">3</text></g>
+    <text x="380" y="326" text-anchor="middle" class="ra-cap">Same message. Three packets. Three routes. Reassembled in order on arrival.</text>
+  </svg>
+            <figcaption>Three packets from one message, three routes, reassembled on arrival.</figcaption>
+            <button type="button" class="check-btn secondary ra-replay" id="route-replay">&#8635; Replay the journey</button>
+          </figure>
+          <h3>Now test it</h3>
+          <p>A router in the middle of the network fails while a page is being sent as packets. What happens?</p>
+          <div class="single-select" id="q-routerfail" data-correct="around">
+            <button type="button" data-value="restart">The whole transfer stops and has to start again from the beginning</button>
+            <button type="button" data-value="around">The following packets are routed around the failed router and the transfer carries on</button>
+            <button type="button" data-value="silent">The receiver gets a page with a piece missing and has no way of noticing</button>
+            <button type="button" data-value="oneroute">The sender has to choose one route for every packet before it starts</button>
+          </div>
+          <p class="feedback" id="q-routerfail-feedback" hidden></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">3</span><span class="beat-name">Consolidate</span><span class="beat-why">carry this forward</span></div>
+      <div class="beat-body">
+        <div class="take"><h3>The one-line version</h3><p>Data is split into numbered, independently routed packets and reassembled at the destination.</p></div>
+        <div class="take"><h3>Why that helps</h3><p>There is no single path to break. A failed router is routed around; out-of-order arrival is normal and fixed by sequence numbers.</p></div>
+        <div class="take echo-take"><h3>Your guess at the start</h3><p class="echo-quote" id="hook-echo"></p><p>What actually happens: it arrives <strong>in pieces</strong>, as packets. If you guessed one stream, that's the usual instinct, and the section above is why it's wrong.</p></div>
+      </div>
+    </div>
+
+    <button class="next-btn" data-next="sec-2">Next: what&rsquo;s inside a packet &rarr;</button>
+  </section>
+
+<!-- ==================== SECTION 2 ==================== -->
+  <section class="site-section" id="sec-2" data-title="Packets">
+    <div class="eyebrow">Section 2 · about 6 min</div>
+
+    <div class="beat teach-beat">
+      <div class="beat-head"><span class="beat-num">1</span><span class="beat-name">Teach</span><span class="beat-why">work through this first</span></div>
+      <div class="beat-body">
+        <h2 class="beat-h">What&rsquo;s actually inside one</h2>
+        <p>Three parts, each there for a reason. The third one explains something most people get wrong about reliability.</p>
+        <div class="stage">
+          <div class="chain"><div class="node" data-focus="header"><span class="nlabel">PART 1</span><span class="nname">Header</span><span class="nrole">where to, which one</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="payload"><span class="nlabel">PART 2</span><span class="nname">Payload</span><span class="nrole">the data you wanted</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="footer"><span class="nlabel">PART 3</span><span class="nname">Footer</span><span class="nrole">arrived intact?</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="reliab"><span class="nlabel">SO WHAT</span><span class="nname">Recovery</span><span class="nrole">detect, then re-request</span></div></div>
+          <p class="chain-caption">Press play &mdash; or switch to reading &mdash; and the diagram will follow along.</p>
+        </div>
+        <div class="rail"><div class="rail-fill"></div></div>
+        <div class="narr">
+          <button type="button" class="btn narr-prev" disabled>&#9664; Back</button>
+          <button type="button" class="btn primary narr-play">&#9654; Play the explanation</button>
+          <button type="button" class="btn narr-stop" disabled>Stop</button>
+          <button type="button" class="btn narr-next">Next &#9654;</button>
+          <button type="button" class="btn narr-read">Read it instead</button>
+          <span class="seg-count">0 / 0</span>
+        </div>
+        <p class="narr-hint">Listen or read &mdash; same words either way. You can stop and replay any part.</p>
+        <div class="script" hidden></div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">2</span><span class="beat-name">Check</span><span class="beat-why">does it hold up?</span></div>
+      <div class="beat-body">
+        <p class="lock-msg">&#128274; Work through the explanation above first &mdash; this unlocks at the end.</p>
+        <div class="check-zone locked">
+          <figure class="diagram-wrap">
+            <img src="diagrams/packet-structure.svg" alt="A packet drawn as three joined blocks: header with source and destination IP addresses and a sequence number, payload with the actual data, and footer with error checking.">
+            <figcaption>The three parts of a packet.</figcaption>
+          </figure>
+
+          <h3>Which part carries the destination?</h3>
+          <div class="single-select" id="q-part" data-correct="header">
+            <button type="button" data-value="header">The header</button>
+            <button type="button" data-value="payload">The payload</button>
+            <button type="button" data-value="footer">The footer</button>
+            <button type="button" data-value="none">It&rsquo;s not in the packet &mdash; the router already knows</button>
+          </div>
+          <p class="feedback" id="q-part-feedback" hidden></p>
+
+          <h3>Packet 3 never arrives</h3>
+          <p>Five packets sent, four arrive. Without looking back up: how does the receiver know one is missing, and what does it do?</p>
+          <div class="field-block">
+            <label for="q-lost">Your answer</label>
+            <textarea id="q-lost" data-store="lost" rows="3" placeholder="What does the header make possible here?"></textarea>
+          </div>
+          <button class="reveal-btn" data-reveal="a-lost" data-needs="q-lost" type="button">Compare with a model answer</button>
+          <div class="model-answer" id="a-lost" hidden>
+            <p>The sequence numbers give it away &mdash; the receiver has 1, 2, 4 and 5, so the gap tells it 3 is missing without anyone reporting it.</p>
+            <p>Packet 3 is sent again, and only packet 3. The other four stay put.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">3</span><span class="beat-name">Consolidate</span><span class="beat-why">carry this forward</span></div>
+      <div class="beat-body">
+        <div class="take"><h3>The three parts</h3><p><strong>Header</strong> &mdash; source and destination IP, plus the sequence number. <strong>Payload</strong> &mdash; the actual data. <strong>Footer</strong> (also called the <em>trailer</em>) &mdash; end marker and error checking.</p></div>
+        <div class="take"><h3>The bit that gets misremembered</h3><p>Reliability is not packets never failing &mdash; they are lost routinely. It is the receiver being able to <em>detect</em> a gap and have <em>only</em> the missing piece sent again.</p></div>
+        <div class="take"><h3>Who does what</h3><p>The numbering and the resending are the job of a protocol called <strong>TCP</strong>, which works alongside IP. IP only does the addressing. You will meet <strong>TCP/IP</strong> together in the protocols homework (H3).</p></div>
+      </div>
+    </div>
+
+    <button class="next-btn" data-next="sec-3">Next: addressing &rarr;</button>
+  </section>
+
+  <!-- ==================== SECTION 3 ==================== -->
+  <section class="site-section" id="sec-3" data-title="IPv4">
+    <div class="eyebrow">Section 3 · about 11 min</div>
+
+    <div class="beat teach-beat">
+      <div class="beat-head"><span class="beat-num">1</span><span class="beat-name">Teach</span><span class="beat-why">work through this first</span></div>
+      <div class="beat-body">
+        <h2 class="beat-h">Every device needs an address</h2>
+        <p>Where the four numbers come from, why they stop at 255, and why the internet ran out of them.</p>
+        <div class="stage">
+          <div class="chain"><div class="node" data-focus="unique"><span class="nlabel">WHY</span><span class="nname">Unique</span><span class="nrole">one address per device</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="octets"><span class="nlabel">SHAPE</span><span class="nname">4 octets</span><span class="nrole">0&ndash;255 each</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="binary"><span class="nlabel">INSIDE</span><span class="nname">8 bits</span><span class="nrole">place values you know</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="limit"><span class="nlabel">LIMIT</span><span class="nname">255</span><span class="nrole">all eight bits set</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="ipv6"><span class="nlabel">AFTER</span><span class="nname">IPv6</span><span class="nrole">128 bits instead of 32</span></div></div>
+          <p class="chain-caption">Press play &mdash; or switch to reading &mdash; and the diagram will follow along.</p>
+        </div>
+        <div class="rail"><div class="rail-fill"></div></div>
+        <div class="narr">
+          <button type="button" class="btn narr-prev" disabled>&#9664; Back</button>
+          <button type="button" class="btn primary narr-play">&#9654; Play the explanation</button>
+          <button type="button" class="btn narr-stop" disabled>Stop</button>
+          <button type="button" class="btn narr-next">Next &#9654;</button>
+          <button type="button" class="btn narr-read">Read it instead</button>
+          <span class="seg-count">0 / 0</span>
+        </div>
+        <p class="narr-hint">Listen or read &mdash; same words either way. You can stop and replay any part.</p>
+        <div class="script" hidden></div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">2</span><span class="beat-name">Check</span><span class="beat-why">does it hold up?</span></div>
+      <div class="beat-body">
+        <p class="lock-msg">&#128274; Work through the explanation above first &mdash; this unlocks at the end.</p>
+        <div class="check-zone locked">
+          <div class="octet-split">
+      <div class="octet-box"><span class="octet-num">192</span><span class="octet-lbl">octet 1</span></div>
+      <span class="octet-dot">.</span>
+      <div class="octet-box"><span class="octet-num">168</span><span class="octet-lbl">octet 2</span></div>
+      <span class="octet-dot">.</span>
+      <div class="octet-box"><span class="octet-num">0</span><span class="octet-lbl">octet 3</span></div>
+      <span class="octet-dot">.</span>
+      <div class="octet-box"><span class="octet-num">1</span><span class="octet-lbl">octet 4</span></div>
+    </div>
+
+          <p class="note-small">The worked example from the explanation, to refer back to: <strong>192</strong> &mdash; take 128, then 64, and nothing is left.</p>
+          <table class="pv-table worked">
+      <thead><tr><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+      <tbody><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody>
+    </table>
+          <p class="note-small">So <strong>192</strong> in binary is <code>11000000</code>.</p>
+
+          <div class="pv-exercise" id="pv-168" data-target="168">
+      <p><strong>Your turn, with help.</strong> Fill in the table for <strong>168</strong> — put a 1 or a 0 in each column. Stuck? Reveal the method one column at a time.</p>
+      <table class="pv-table">
+        <thead><tr><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+        <tbody><tr>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-128" aria-label="128 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-64" aria-label="64 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-32" aria-label="32 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-16" aria-label="16 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-8" aria-label="8 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-4" aria-label="4 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-2" aria-label="2 column"></td>
+          <td><input type="text" maxlength="1" inputmode="numeric" data-store="pv168-1" aria-label="1 column"></td>
+        </tr></tbody>
+      </table>
+      <button type="button" class="check-btn pv-check">Check my table</button>
+      <p class="feedback" hidden></p>
+      <div class="hint-steps" id="hints-168">
+        <ol>
+          <li hidden><strong>128:</strong> does 128 fit into 168? Yes, so that column is 1. 168 &minus; 128 = 40 left.</li>
+          <li hidden><strong>64:</strong> does 64 fit into 40? No, so 0. Still 40 left.</li>
+          <li hidden><strong>32:</strong> does 32 fit into 40? Yes, so 1. 40 &minus; 32 = 8 left.</li>
+          <li hidden><strong>16:</strong> does 16 fit into 8? No, so 0.</li>
+          <li hidden><strong>8:</strong> does 8 fit into 8? Yes, so 1. Nothing is left.</li>
+          <li hidden><strong>4, 2 and 1:</strong> nothing is left, so all three are 0.</li>
+        </ol>
+        <button type="button" class="reveal-btn hint-next">Show the next step</button>
+      </div>
+    </div>
+          <div class="bd-exercise" id="bd-100" data-answer="100">
+            <p><strong>On your own, the other way.</strong> What decimal number is the octet <code>01100100</code>? Add the place values of every column with a 1.</p>
+            <table class="pv-table worked">
+              <thead><tr><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+              <tbody><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr></tbody>
+            </table>
+            <div class="field-block">
+              <label for="q-bd100">Decimal value</label>
+              <input type="text" id="q-bd100" class="numeric-input" inputmode="numeric" data-store="bd100">
+              <button type="button" class="check-btn bd-check">Check</button>
+            </div>
+            <p class="feedback" hidden></p>
+          </div>
+
+          <h3>Valid or not?</h3>
+          <p>Click each address to sort it. Apply the rule from the explanation.</p>
+          <div class="sorter" id="ip-sorter"></div>
+          <p class="feedback" id="ip-sorter-feedback" hidden></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">3</span><span class="beat-name">Consolidate</span><span class="beat-why">carry this forward</span></div>
+      <div class="beat-body">
+        <div class="take"><h3>The shape</h3><p>Four octets, each 0&ndash;255, each 8 bits &mdash; 32 bits in total, written in dotted decimal. An address is valid only when it has <strong>exactly four</strong> numbers and <strong>every</strong> one is between 0 and 255.</p></div>
+        <div class="take"><h3>Why 255</h3><p>All eight bits set: 128+64+32+16+8+4+2+1 = 255. It is arithmetic, not a rule someone chose &mdash; which is why an octet of 256 is invalid.</p></div>
+        <div class="take"><h3>Why IPv6</h3><p>32 bits gives ~4.3 billion addresses. Phones, watches, TVs and doorbells exhausted that. IPv6 uses 128 bits.</p></div>
+      </div>
+    </div>
+
+    <button class="next-btn" data-next="sec-4">Next: how names become addresses &rarr;</button>
+  </section>
+
+  <!-- ==================== SECTION 4 ==================== -->
+  <section class="site-section" id="sec-4" data-title="DNS">
+    <div class="eyebrow">Section 4 · about 11 min</div>
+
+    <div class="beat teach-beat">
+      <div class="beat-head"><span class="beat-num">1</span><span class="beat-name">Teach</span><span class="beat-why">work through this first</span></div>
+      <div class="beat-body">
+        <h2 class="beat-h">Nobody types 142.250.70.206</h2>
+        <p>A name goes in and an address comes out &mdash; but not in one step, and the reason why is worth understanding.</p>
+        <div class="stage">
+          <div class="chain"><div class="node" data-focus="you"><span class="nlabel">YOU</span><span class="nname">Browser</span><span class="nrole">asks for a name</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="res"><span class="nlabel">THE LOOKER</span><span class="nname">Resolver</span><span class="nrole">does the looking</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="cache"><span class="nlabel">SHORTCUT</span><span class="nname">Cache</span><span class="nrole">already know it?</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="root"><span class="nlabel">ASKED FIRST</span><span class="nname">Root</span><span class="nrole">who handles .com?</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="tld"><span class="nlabel">ASKED SECOND</span><span class="nname">TLD .com</span><span class="nrole">who is authoritative?</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="auth"><span class="nlabel">ASKED THIRD</span><span class="nname">Authoritative</span><span class="nrole">holds the real record</span></div><span class="arrow">&rarr;</span><div class="node" data-focus="notdns"><span class="nlabel">NOT DNS</span><span class="nname">Other jobs</span><span class="nrole">DHCP · HTTP · TLS</span></div></div>
+          <p class="chain-caption">Press play &mdash; or switch to reading &mdash; and the diagram will follow along.</p>
+        </div>
+        <div class="rail"><div class="rail-fill"></div></div>
+        <div class="narr">
+          <button type="button" class="btn narr-prev" disabled>&#9664; Back</button>
+          <button type="button" class="btn primary narr-play">&#9654; Play the explanation</button>
+          <button type="button" class="btn narr-stop" disabled>Stop</button>
+          <button type="button" class="btn narr-next">Next &#9654;</button>
+          <button type="button" class="btn narr-read">Read it instead</button>
+          <span class="seg-count">0 / 0</span>
+        </div>
+        <p class="narr-hint">Listen or read &mdash; same words either way. You can stop and replay any part.</p>
+        <div class="script" hidden></div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">2</span><span class="beat-name">Check</span><span class="beat-why">does it hold up?</span></div>
+      <div class="beat-body">
+        <p class="lock-msg">&#128274; Work through the explanation above first &mdash; this unlocks at the end.</p>
+        <div class="check-zone locked">
+          <h3>Put the lookup back in order</h3>
+          <p>From memory now. Drag a row by its <strong>&#10303;</strong> handle to move it. If dragging is awkward, the <strong>&uarr;</strong> and <strong>&darr;</strong> buttons do the same job.</p>
+          <div class="order-exercise">
+            <ol class="order-list" id="dns-order"></ol>
+            <div class="order-controls">
+              <button type="button" class="check-btn" id="dns-check">Check my order</button>
+              <button type="button" class="check-btn secondary" id="dns-shuffle">Shuffle again</button>
+              <button type="button" class="check-btn secondary" id="dns-show" hidden>Show me the correct order</button>
+            </div>
+            <p class="feedback" id="dns-order-feedback" hidden></p>
+          </div>
+
+          <h3>Now visit the same site again</h3>
+          <div class="field-block">
+            <label for="q-cache">You load <code>example.com</code>. A minute later a classmate on the same home network loads it too. Which of the ten steps don&rsquo;t need to happen for them, and why?</label>
+            <textarea id="q-cache" data-store="cache" rows="3" placeholder="Which step did the explanation tell you to hold on to?"></textarea>
+          </div>
+          <button class="reveal-btn" data-reveal="a-cache" data-needs="q-cache" type="button">Compare with a model answer</button>
+          <div class="model-answer" id="a-cache" hidden>
+            <p><strong>Steps 4 to 8 are skipped.</strong> Both of you use the same resolver. It cached the answer at step 8 when you looked the name up, so at step 3 it finds the answer and hands it straight back to your classmate&rsquo;s browser. The root, TLD and authoritative servers are never contacted, nothing comes back from them, and there is nothing new to cache. Steps 9 and 10 (the browser's request and the page loading) still happen as normal.</p>
+          </div>
+
+          <h3>Which job belongs to DNS?</h3>
+          <div class="single-select" id="q-dnsjob" data-correct="translate">
+            <button type="button" data-value="translate">Translating a domain name into an IP address</button>
+            <button type="button" data-value="assign">Automatically assigning an IP address to a device joining a network</button>
+            <button type="button" data-value="transfer">Transferring the webpage&rsquo;s HTML from the server to the browser</button>
+            <button type="button" data-value="encrypt">Encrypting data in transit so it can&rsquo;t be read if intercepted</button>
+          </div>
+          <p class="feedback" id="q-dnsjob-feedback" hidden></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head"><span class="beat-num">3</span><span class="beat-name">Consolidate</span><span class="beat-why">carry this forward</span></div>
+      <div class="beat-body">
+        <div class="take"><h3>The one-line version</h3><p>DNS takes a domain name and returns an IP address. It is distributed &mdash; no single machine holds every name &mdash; so a lookup walks a hierarchy: resolver, root, TLD, authoritative.</p></div>
+        <div class="take" id="dns-ref" hidden><h3>The ten steps, in order</h3><ol class="dns-ref" id="dns-ref-list"></ol><p class="dns-ref-note">The shaded steps (4 to 8) are the ones skipped when the resolver already has the answer cached.</p></div>
+        <div class="take"><h3>Why the second visit is faster</h3><p>The resolver caches the answer, skipping root, TLD and authoritative next time. Same reason a site that moves servers takes hours to reach everyone.</p></div>
+        <div class="take"><h3>The confusion that costs marks</h3>
+          <p>DNS does one thing: name in, address out. Three jobs that are <em>not</em> DNS:</p>
+          <div class="not-list">
+            <div class="not-row"><code>DHCP</code><span>gives your device an address when it joins a network</span></div>
+            <div class="not-row"><code>HTTP</code><span>fetches the actual page once you have the address</span></div>
+            <div class="not-row"><code>TLS</code><span>encrypts what travels, so it can&rsquo;t be read if intercepted</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="next-btn" data-next="sec-5">Next: check yourself &rarr;</button>
+  </section>
+
+  <!-- ==================== SECTION 5 ==================== -->
+  <section class="site-section" id="sec-5" data-title="Check &amp; wrap up">
+    <div class="eyebrow">Section 5 · about 10 min</div>
+
+    <h2>Your summary</h2>
+    <p>When you have attempted every question on this page, you can download a summary to keep: your answers, the correct answer underneath any you got wrong, and a recap of what each section covered. It is useful to revise from, and to bring to class.</p>
+
+    <div class="summary-box" id="summary-box">
+      <h3>Questions attempted: <span id="summary-count">0 of 0</span></h3>
+      <ul class="progress-list" id="summary-progress"></ul>
+      <p class="summary-status" id="summary-status" aria-live="polite"></p>
+      <div class="summary-actions">
+        <button type="button" class="check-btn" id="summary-download" disabled>Download my summary</button>
+        <button type="button" class="check-btn secondary" id="summary-print" disabled>Print my summary</button>
+      </div>
+      <p class="note-small">The download is a web page (.html) that opens in any browser. For a PDF, open it, choose Print, then Save as PDF.</p>
+    </div>
+
+    <div class="section-rule"></div>
+
+    <h2>Words from this page</h2>
+    <table class="glossary">
+      <tbody>
+        <tr><td>Packet</td><td>A small, numbered piece of a larger message, sent on its own across the network. <span class="where">S1</span></td></tr>
+        <tr><td>Router</td><td>A device that passes each packet one step closer to its destination. <span class="where">S1</span></td></tr>
+        <tr><td>Sequence number</td><td>The number in a packet's header that says where it belongs in the message, so the pieces can be put back in order. <span class="where">S1&ndash;S2</span></td></tr>
+        <tr><td>Header, payload, footer</td><td>The three parts of a packet: addressing and sequence number; the actual data; and the end marker with error checking (the footer is also called the trailer). <span class="where">S2</span></td></tr>
+        <tr><td>IP address</td><td>The unique address of a device on a network, used to route packets to it. <span class="where">S3</span></td></tr>
+        <tr><td>IPv4</td><td>The version of IP that uses 32-bit addresses, written as four numbers from 0 to 255. <span class="where">S3</span></td></tr>
+        <tr><td>Octet</td><td>One of the four 8-bit numbers in an IPv4 address. <span class="where">S3</span></td></tr>
+        <tr><td>IPv6</td><td>The newer version of IP, using 128-bit addresses because IPv4 ran out. <span class="where">S3</span></td></tr>
+        <tr><td>DNS (Domain Name System)</td><td>The system that turns a domain name, such as <code>example.com</code>, into an IP address. <span class="where">S4</span></td></tr>
+        <tr><td>Resolver</td><td>The server, usually run by your internet provider, that looks up a domain name on your behalf. <span class="where">S4</span></td></tr>
+        <tr><td>Cache</td><td>A store of recent answers, kept so a repeat request can be answered straight away. <span class="where">S4</span></td></tr>
+        <tr><td>Root, TLD and authoritative servers</td><td>The three levels of the DNS hierarchy: who handles each ending such as <code>.com</code>; who is authoritative for each name; and the server holding the real, current record. <span class="where">S4</span></td></tr>
+        <tr><td>DHCP, HTTP, TLS</td><td>Three jobs that are <em>not</em> DNS: giving a device its address, fetching the page, and encrypting what travels. <span class="where">S4</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-rule"></div>
+
+    <h2>Check yourself on Canvas</h2>
+    <p>Open the <strong>H1 check</strong> quiz on Canvas and do it <strong>closed book</strong>, with this page closed. If you can't answer without the notes, you don't have it yet, and it's much better to find that out now than in the exam. It also shows your teacher you've done this homework.</p>
+    <p><strong>Something you couldn&rsquo;t answer?</strong> That is useful, not a failure. Say so in the last question of the Canvas quiz (&ldquo;one thing I am still unsure about&rdquo;) and it will be covered in class.</p>
+
+    <div class="section-rule"></div>
+
+    <h2>Coming up in class</h2>
+    <div class="mini-card amber">You&rsquo;ll run <code>ping</code> and <code>tracert</code> on your own laptop and watch a real route to a server. It should look like the diagram in Section 1.</div>
+
+    <div class="takeaway">This material is <strong>examined</strong>, even though it isn't marked in your PWA assessment. It's worth knowing properly, not just skimming.</div>
+  </section>
+
+</main>
+
+<script src="narration.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

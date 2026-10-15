@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" role="img" aria-labelledby="rt-title rt-desc">
+  <title id="rt-title">Three packets taking three different routes</title>
+  <desc id="rt-desc">The web server splits a page into three numbered packets. They travel by three different routes through five routers. Packet 1 arrives first, then packet 3, then packet 2, and your laptop puts them back in order 1, 2, 3.</desc>
+  <style>
+    .ra-node { font: 700 13px ui-monospace, Consolas, monospace; fill: #B8AA96; }
+    .ra-cap  { font: 13px system-ui, "Segoe UI", sans-serif; fill: #B8AA96; }
+    .ra-good { font: 700 13px system-ui, "Segoe UI", sans-serif; fill: #5EE0A0; }
+    .ra-lbl  { font: 700 13px ui-monospace, Consolas, monospace; fill: #FBF5EC; }
+    .ra-pk   { font: 700 12px ui-monospace, Consolas, monospace; fill: #1A1208; }
+    .ra-route { fill: none; stroke-width: 2.5; stroke-dasharray: 6 5; opacity: .55; }
+    .ra-pkt, .ra-stackp { display: none; }
+  </style>
+  <g fill="#231E19" stroke="#77695A" stroke-width="2"><circle cx="300" cy="60" r="26"/><circle cx="300" cy="170" r="26"/><circle cx="300" cy="280" r="26"/><circle cx="470" cy="110" r="26"/><circle cx="470" cy="230" r="26"/></g>
+    <g class="ra-node" text-anchor="middle"><text x="300" y="65">R1</text><text x="300" y="175">R2</text><text x="300" y="285">R3</text><text x="470" y="115">R4</text><text x="470" y="235">R5</text></g>
+    <rect x="20" y="130" width="120" height="80" rx="8" fill="#1C1814" stroke="#FFC940" stroke-width="2"/>
+    <text x="80" y="165" text-anchor="middle" class="ra-lbl">SENDER</text><text x="80" y="188" text-anchor="middle" class="ra-cap">the web server</text>
+    <rect x="620" y="130" width="120" height="80" rx="8" fill="#1C1814" stroke="#FFC940" stroke-width="2"/>
+    <text x="680" y="165" text-anchor="middle" class="ra-lbl">RECEIVER</text><text x="680" y="188" text-anchor="middle" class="ra-cap">your laptop</text>
+    <path class="ra-route" stroke="#FFC940" d="M140,155 L300,60 L470,110 L620,155"/>
+    <path class="ra-route" stroke="#5EE0A0" d="M140,170 L300,170 L470,230 L620,178"/>
+    <path class="ra-route" stroke="#C8ADFF" d="M140,186 L300,280 L470,230 L620,190"/>
+    <g class="ra-stackp" style="--delay:0.8s"><rect x="24" y="222" width="34" height="26" rx="3" fill="#FFC940"/><text x="41" y="240" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-stackp" style="--delay:1.4s"><rect x="66" y="222" width="34" height="26" rx="3" fill="#5EE0A0"/><text x="83" y="240" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-stackp" style="--delay:2.0s"><rect x="108" y="222" width="34" height="26" rx="3" fill="#C8ADFF"/><text x="125" y="240" text-anchor="middle" class="ra-pk">3</text></g>
+    <text x="80" y="268" text-anchor="middle" class="ra-cap">the page, split into 3</text>
+    <rect x="624" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="666" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="708" y="222" width="34" height="26" rx="3" fill="none" stroke="#77695A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <g class="ra-fill" style="--delay:4.2s"><rect x="624" y="222" width="34" height="26" rx="3" fill="#FFC940"/><text x="641" y="240" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-fill" style="--delay:6.6s"><rect x="666" y="222" width="34" height="26" rx="3" fill="#5EE0A0"/><text x="683" y="240" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-fill" style="--delay:5.0s"><rect x="708" y="222" width="34" height="26" rx="3" fill="#C8ADFF"/><text x="725" y="240" text-anchor="middle" class="ra-pk">3</text></g>
+    <g class="ra-done" style="--delay:7.3s" text-anchor="middle"><text x="680" y="272" class="ra-cap">Arrived as 1, 3, 2</text><text x="680" y="291" class="ra-good">Put back as 1, 2, 3</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,155 L300,60 L470,110 L620,155');--dur:3.4s;--delay:0.8s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#FFC940"/><text y="4" text-anchor="middle" class="ra-pk">1</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,170 L300,170 L470,230 L620,178');--dur:5.2s;--delay:1.4s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#5EE0A0"/><text y="4" text-anchor="middle" class="ra-pk">2</text></g>
+    <g class="ra-pkt" style="offset-path:path('M140,186 L300,280 L470,230 L620,190');--dur:3.0s;--delay:2.0s"><rect x="-17" y="-10" width="34" height="20" rx="3" fill="#C8ADFF"/><text y="4" text-anchor="middle" class="ra-pk">3</text></g>
+    <text x="380" y="326" text-anchor="middle" class="ra-cap">Same message. Three packets. Three routes. Reassembled in order on arrival.</text>
+</svg>
